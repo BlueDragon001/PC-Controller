@@ -1,0 +1,54 @@
+# Build outputs
+bin/
+obj/
+build/
+dist/
+out/
+certs/
+
+# IDE specific files
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Dependencies
+node_modules/
+packages/
+vendor/
+
+# Compiled files
+*.exe
+*.dll
+*.pdb
+*.cache
+
+# Logs and databases
+*.log
+*.sqlite
+logs/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Debug files
+debug/
+Debug/
+Release/
+
+# Personal settings
+*.personal
+*.private

@@ -1,0 +1,8 @@
+flask
+psutil
+pyautogui
+pywinauto
+screen-brightness-control
+pynput
+pywin32
+wmi

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PC Controller - Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --background: #f9fafb;
+            --error: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            background: var(--background);
+            display: grid;
+            place-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1),
+                        0 10px 10px -5px rgba(0,0,0,0.04);
+            width: min(400px, 100%);
+            transform: translateY(0);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        h2 {
+            margin: 0 0 1.5rem;
+            color: #111827;
+            font-size: 1.875rem;
+            font-weight: 700;
+            text-align: center;
+            opacity: 0;
+            animation: fadeSlideDown 0.5s ease forwards;
+        }
+
+        @keyframes fadeSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            animation: fadeSlideUp 0.5s ease forwards;
+        }
+
+        .input-group:nth-child(2) { animation-delay: 0.1s; }
+        .input-group:nth-child(3) { animation-delay: 0.2s; }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transform: scale(1);
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards 0.3s;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1),
+                       0 2px 4px -1px rgba(0,0,0,0.06);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .error {
+            color: var(--error);
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+        }
+
+        .error.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                background: white;
+            }
+            .login-container {
+                box-shadow: none;
+                padding: 1.5rem;
+            }
+        }
+
+        .loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            margin: 0 auto;
+            animation: rotate 1s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        button.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        button.loading .loader {
+            display: block;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Welcome Back</h2>
+        <form id="login-form">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required autocomplete="username">
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+            </div>
+            <button type="submit">
+                Sign In
+                <div class="loader"></div>
+            </button>
+            <div id="error" class="error"></div>
+        </form>
+    </div>
+    <script>
+        const form = document.getElementById('login-form');
+        const button = form.querySelector('button');
+        const error = document.getElementById('error');
+
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            button.classList.add('loading');
+            error.classList.remove('show');
+
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: document.getElementById('username').value,
+                        password: document.getElementById('password').value
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    button.style.background = '#22c55e';
+                    setTimeout(() => window.location.href = '/', 500);
+                } else {
+                    error.textContent = result.message;
+                    error.classList.add('show');
+                    button.classList.remove('loading');
+                }
+            } catch (err) {
+                error.textContent = 'Connection error. Please try again.';
+                error.classList.add('show');
+                button.classList.remove('loading');
+            }
+        };
+    </script>
+</body>
+</html>
